@@ -126,7 +126,7 @@ const addDepartment = () => {
 }
 
 const addRole = () => {
-    connection.promise().query("SELECT department.id, department.name FROM department;"
+    connection.promise().query("SELECT department.name FROM department;"
     ).then(([res]) => {
         inquirer.prompt([
             {
@@ -158,7 +158,7 @@ const addRole = () => {
 
 
 const addEmployee = () => {
-    connection.promise().query("SELECT role.id, role.title FROM role;")
+    connection.promise().query("SELECT role.title, role.id FROM role;")
         .then(([res]) => {
             inquirer.prompt([
                 {
@@ -183,23 +183,25 @@ const addEmployee = () => {
                 let newLastName = res.last_name
                 let newRole = res.role
 
-                connection.promise().query("SELECT employee.first_name, employee.last_name FROM employee WHERE manager_id='null';")
+                connection.promise().query("SELECT employee.first_name, employee.last_name, employee.id FROM employee WHERE manager_id IS NULL;")
                     .then(([res]) => {
                         console.log(res)
-                        // inquirer.prompt([
-                        //     {
-                        //         type: 'list',
-                        //         name: 'manager',
-                        //         message: "Who is the new employee's manager?",
-                        //         choices: res.map(({ id, title }) => ({name: title, value: id}))
-                        //     }
-                        // ])
-                    }).then(([res]) => {
+                        inquirer.prompt([
+                            {
+                                type: 'list',
+                                name: 'manager',
+                                message: "Who is the new employee's manager?",
+                                choices: res.map(({ first_name, last_name, id }) => ({name: `${first_name} ${last_name}`, value: id}))
+                            }
+                        ]).then((res) => {  
                         let newManager = res.manager
-                        const newEmployee = [newFirstName, newLastName, newRole, newManager]
-                        connection.promise().query("INSERT INTO employee (first_name, last_name, role_id, manager_id VALUES (?,?,?,?)", newEmployee)
+                        const newEmployee = [`${newFirstName}`, `${newLastName}`, `${newRole}`, `${newManager}`]
+                        console.log(newEmployee)
+                        connection.promise().query(
+                            "INSERT INTO employee (first_name, last_name, role_id, manager_id VALUES(?, ?, ?, ?)", newEmployee)
                         console.log('New Employee Added!')
                     }).then(() => firstQuestions())
+                    })
             })
         })
 }
