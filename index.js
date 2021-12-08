@@ -143,7 +143,7 @@ const addRole = () => {
                 type: 'list',
                 name: 'department',
                 message: 'What department is the role assigned to?',
-                choices: res.map(({ id, name }) => ({ name: name, value: id }))
+                choices: res.map(({ name, id }) => ({ name: name, value: id }))
             }
         ]).then((res) => {
             const newRole = [`${res.title}`, `${res.salary}`, `${res.department}`]
@@ -175,7 +175,7 @@ const addEmployee = () => {
                     type: 'list',
                     name: 'role',
                     message: "What is the new employee's role?",
-                    choices: res.map(({ id, title }) => ({ name: title, value: id }))
+                    choices: res.map(({ title, id }) => ({ name: title, value: id }))
                 }
 
             ]).then((res) => {
@@ -229,7 +229,10 @@ const addEmployee = () => {
 // })
 
 const updateEmployeeRole = () => {
+    connection.promise().query("SELECT * from employee")
+        .then(([res]) => {
 
+        })
 }
 
 function exitFunction() {
