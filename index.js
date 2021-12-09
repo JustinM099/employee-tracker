@@ -191,16 +191,18 @@ const addEmployee = () => {
                                 type: 'list',
                                 name: 'manager',
                                 message: "Who is the new employee's manager?",
-                                choices: res.map(({ first_name, last_name, id }) => ({name: `${first_name} ${last_name}`, value: id}))
+                                choices: res.map(({ first_name, last_name, id }) => ({ name: `${first_name} ${last_name}`, value: id }))
                             }
-                        ]).then((res) => {  
-                        let newManager = res.manager
-                        const newEmployee = [`${newFirstName}`, `${newLastName}`, `${newRole}`, `${newManager}`]
-                        console.log(newEmployee)
-                        connection.promise().query(
-                            "INSERT INTO employee (first_name, last_name, role_id, manager_id VALUES(?, ?, ?, ?)", newEmployee)
-                        console.log('New Employee Added!')
-                    }).then(() => firstQuestions())
+                        ]).then((res) => {
+                            let newManager = res.manager
+                            const newEmployee = [`${newFirstName}`, `${newLastName}`, `${newRole}`, `${newManager}`]
+                            console.log(newEmployee)
+                            connection.promise().query(
+                                "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)", newEmployee
+                            ).then(console.log('New Employee Added!')
+                            ).then(() => firstQuestions())
+
+                        })
                     })
             })
         })
