@@ -3,7 +3,7 @@ const util = require('util')
 const ct = require('console.table')
 const connection = require('./db/connection')
 const figlet = require('figlet')
-const { title } = require('process')
+const { title, listenerCount } = require('process')
 
 
 
@@ -235,10 +235,41 @@ const addEmployee = () => {
 const updateEmployeeRole = () => {
     connection.promise().query("SELECT * from employee")
         .then(([res]) => {
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employee',
+                    message: `Whose role would you like to update?`,
+                    choices: res.map(({first_name, last_name, id}) => ({name: `${first_name} ${last_name}`, value: id}))
+                }
+            ]).then((res) => {
+                const updatedEmployee = res.employee
+                connection.promise().query("SELECT role.id, role.title FROM role")
+                .then(([res]) => {
+                    inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'viewRoles',
+                            message: 'What would you like their new role to be?',
+                            choices: res.map(({title, id}) => ({name: title, value: id}))
+                        }
+                    ]).then((res) => {
+                        connection.promise().query("UPDATE employee SET role_id = ? WHERE id = ?", [res.viewRoles, updatedEmployee]
+                        ).then(console.log('Employee role updated!')
+                        ).then(() => firstQuestions())
+                    })
+                })
 
+            })
         })
 }
-
+// .then((res) => {
+//                         connection.promise().query("UPDATE employee SET role_id = ? WHERE id = ?", updatedEmployee, res.viewRoles)
+//                         .then(console.log('Employee role updated!')
+//                         .then(() => firstQuestions()))
+                        
+//                     })
+// connection.promise().query("UPDATE employee SET role_id = ? WHERE id = ?", )
 function exitFunction() {
     console.log("\n")
     console.log('Thank you. Have a nice day!')
