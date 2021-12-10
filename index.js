@@ -191,7 +191,6 @@ const addEmployee = () => {
 
                 connection.promise().query("SELECT employee.first_name, employee.last_name, employee.id FROM employee WHERE manager_id IS NULL;")
                     .then(([res]) => {
-                        console.log(res)
                         inquirer.prompt([
                             {
                                 type: 'list',
@@ -202,7 +201,6 @@ const addEmployee = () => {
                         ]).then((res) => {
                             let newManager = res.manager
                             const newEmployee = [`${newFirstName}`, `${newLastName}`, `${newRole}`, `${newManager}`]
-                            console.log(newEmployee)
                             connection.promise().query(
                                 "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)", newEmployee
                             ).then(console.log('\n', '\n', 'New Employee Added!', '\n', '\n')
