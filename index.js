@@ -101,7 +101,7 @@ const viewRoles = () => {
 
 const viewEmployees = () => {
     connection.promise().query(
-        "SELECT * FROM employee;"
+        "SELECT employee.id AS 'ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary as Salary, CONCAT(manager.first_name, ' ', manager.last_name) AS 'Manager' from employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id"
     ).then(([response]) => {
         console.log("\n")
         console.table(response)
@@ -120,13 +120,13 @@ const addDepartment = () => {
         connection.promise().query(
             "INSERT INTO department (name) VALUES(?)", res
         ).then(() => {
-            console.log(`Your update has been made!`)
+            console.log('\n', '\n', `Your update has been made!`, '\n', '\n')
         }).then(() => firstQuestions())
     })
 }
 
 const addRole = () => {
-    connection.promise().query("SELECT department.name FROM department;"
+    connection.promise().query("SELECT department.name, department.id FROM department;"
     ).then(([res]) => {
         inquirer.prompt([
             {
@@ -150,7 +150,7 @@ const addRole = () => {
             connection.promise().query(
                 "INSERT INTO role (title, salary, department_id) VALUES(?, ?, ?)", newRole
             ).then(() => {
-                console.log(`Your update has been made!`)
+                console.log('\n', '\n', `Your update has been made!`, '\n', '\n')
             }).then(() => firstQuestions())
         })
     })
@@ -199,7 +199,7 @@ const addEmployee = () => {
                             console.log(newEmployee)
                             connection.promise().query(
                                 "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)", newEmployee
-                            ).then(console.log('New Employee Added!')
+                            ).then(console.log('\n', '\n', 'New Employee Added!', '\n', '\n')
                             ).then(() => firstQuestions())
 
                         })
@@ -255,7 +255,7 @@ const updateEmployeeRole = () => {
                         }
                     ]).then((res) => {
                         connection.promise().query("UPDATE employee SET role_id = ? WHERE id = ?", [res.viewRoles, updatedEmployee]
-                        ).then(console.log('Employee role updated!')
+                        ).then(console.log('\n', '\n', 'Employee role updated!', '\n', '\n')
                         ).then(() => firstQuestions())
                     })
                 })
