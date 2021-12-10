@@ -1,12 +1,12 @@
+//imports
 const inquirer = require('inquirer')
 const util = require('util')
 const ct = require('console.table')
 const connection = require('./db/connection')
 const figlet = require('figlet')
-const { title, listenerCount } = require('process')
 
 
-
+//asks the initial questions
 const firstQuestions = () => {
     inquirer.prompt([
         {
@@ -79,6 +79,7 @@ const firstQuestions = () => {
     })
 }
 
+//view all departments
 const viewDepartments = () => {
     connection.promise().query(
         "SELECT * FROM department;"
@@ -89,6 +90,7 @@ const viewDepartments = () => {
     )
 }
 
+//view all roles
 const viewRoles = () => {
     connection.promise().query(
         "SELECT * FROM role;"
@@ -99,6 +101,7 @@ const viewRoles = () => {
     )
 }
 
+//view all employees
 const viewEmployees = () => {
     connection.promise().query(
         "SELECT employee.id AS 'ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary as Salary, CONCAT(manager.first_name, ' ', manager.last_name) AS 'Manager' from employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id"
@@ -109,6 +112,7 @@ const viewEmployees = () => {
     )
 }
 
+//add a department
 const addDepartment = () => {
     inquirer.prompt([
         {
@@ -117,14 +121,16 @@ const addDepartment = () => {
             message: 'What would you like to name the new department?'
         }
     ]).then((res) => {
+        const newDepartment = res.name
         connection.promise().query(
-            "INSERT INTO department (name) VALUES(?)", res
+            "INSERT INTO department (name) VALUES(?)", newDepartment
         ).then(() => {
             console.log('\n', '\n', `Your update has been made!`, '\n', '\n')
         }).then(() => firstQuestions())
     })
 }
 
+//add a role
 const addRole = () => {
     connection.promise().query("SELECT department.name, department.id FROM department;"
     ).then(([res]) => {
@@ -156,7 +162,7 @@ const addRole = () => {
     })
 }
 
-
+//add a new employee
 const addEmployee = () => {
     connection.promise().query("SELECT role.title, role.id FROM role;")
         .then(([res]) => {
@@ -208,30 +214,7 @@ const addEmployee = () => {
         })
 }
 
-// .then((res) => {
-//     let newFirstName = res.first_name
-//     let newLastName = res.last_name
-//     let newRole = res.role
-
-//     connection.promise().query("SELECT employee.first_name, employee.last_name FROM employee WHERE manager_id='null';")
-//         .then(([res]) => {
-//             inquirer.prompt([
-//                 {
-//                     type: 'list',
-//                     name: 'manager',
-//                     message: "Who is the new employee's manager?",
-//                     choices: res.map(({ id, title }) => ({ name: title, value: id}))
-//                 }
-//             ])
-//         })
-//         .then(([res]) => {
-//             let newManager = res.manager
-//             const newEmployee = [newFirstName, newLastName, newRole, newManager]
-//             connection.promise().query("INSERT INTO employee SET ?", newEmployee)    
-//             }
-//         })
-// })
-
+//update an employee role
 const updateEmployeeRole = () => {
     connection.promise().query("SELECT * from employee")
         .then(([res]) => {
@@ -263,13 +246,8 @@ const updateEmployeeRole = () => {
             })
         })
 }
-// .then((res) => {
-//                         connection.promise().query("UPDATE employee SET role_id = ? WHERE id = ?", updatedEmployee, res.viewRoles)
-//                         .then(console.log('Employee role updated!')
-//                         .then(() => firstQuestions()))
-                        
-//                     })
-// connection.promise().query("UPDATE employee SET role_id = ? WHERE id = ?", )
+
+//exit
 function exitFunction() {
     console.log("\n")
     console.log('Thank you. Have a nice day!')
