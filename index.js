@@ -93,7 +93,7 @@ const viewDepartments = () => {
 //view all roles
 const viewRoles = () => {
     connection.promise().query(
-        "SELECT * FROM role;"
+        "SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;"
     ).then(([response]) => {
         console.log("\n")
         console.table(response)
@@ -255,6 +255,7 @@ function exitFunction() {
     process.exit()
 }
 
+//init
 const init = () => {
     ascii()
     setTimeout(function () {
@@ -262,6 +263,7 @@ const init = () => {
     }, 100)
 }
 
+//ascii intro
 const ascii = () => {
     figlet('EMPLOYEE TRACKER', function (err, data) {
         if (err) {
