@@ -93,7 +93,7 @@ const viewDepartments = () => {
 //view all roles
 const viewRoles = () => {
     connection.promise().query(
-        "SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;"
+        "SELECT role.id, role.title, role.salary, department.name AS department FROM role JOIN department on role.department_id = department.id;"
     ).then(([response]) => {
         console.log("\n")
         console.table(response)
@@ -104,7 +104,7 @@ const viewRoles = () => {
 //view all employees
 const viewEmployees = () => {
     connection.promise().query(
-        "SELECT employee.id AS 'ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary as Salary, CONCAT(manager.first_name, ' ', manager.last_name) AS 'Manager' from employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id"
+        "SELECT employee.id AS 'ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary as Salary, CONCAT(manager.first_name, ' ', manager.last_name) AS 'Manager' from employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN employee manager on manager.id = employee.manager_id LEFT JOIN department ON role.department_id = department.id;"
     ).then(([response]) => {
         console.log("\n")
         console.table(response)
